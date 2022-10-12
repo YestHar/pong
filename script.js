@@ -2,6 +2,8 @@ const {body} = document;
 const canvas = document.createElement('canvas')
 const context = canvas.getContext("2d");
 const isMobile = window.matchMedia('(max-width:600px)');
+const screenWidth = window.screen.width;
+const canvasPosition = screenWidth /2 - width / 2;
 const gameOver = document.createElement('div');
 const width =500;
 const height = 550;
@@ -50,7 +52,8 @@ function animate(){
     renderCanvas();
     ballMove();
     ballBounderies();
-    // showGameOver();
+    gameOver();
+    computerAI()
     if(!isGameOver){
         window.requestAnimationFrame(animate);
     }
@@ -61,7 +64,21 @@ function ballReset(){
     speedY = -3;
     paddleContent = false;
 }
-
+function computerAI(){
+    if(playerMoved){
+        if(paddleTopX + paddleDiff < ballX){
+            paddleTopX += computerSpeed;
+        } else {
+            paddleTopX += computerSpeed;
+        }
+    }
+}
+function gameOvers(){
+    if(playerScpre === winningScore || computerScore === winningScore){
+        isGameOver = true;
+        const winner = playerScpre === winningScore ? 
+    }
+}
 function ballMove(){
     ballY += -speedY;
     if(playerMoved && paddleContent){
@@ -157,7 +174,10 @@ function renderCanvas(){
 };
 
 function startGame(){
-
+    if(isGameOver && !isNewGame){
+        body.removeChild(gameOver);
+        canvas.hidden = false;
+    }
     isGameOver = false;
     isNewGame = false;
     playerScpre=0;
@@ -165,7 +185,15 @@ function startGame(){
     createCanvas();
     animate();
     canvas.addEventListener('mousemove',(e)=>{
-
+        playerMoved = true;
+        paddleBottomX =  e.clientX - canvasPosition - paddleDiff;
+        if(paddleBottomX < paddleDiff){
+            paddleBottomX = 0;
+        }
+        if(paddleBottomX >width - paddleWidth){
+            paddleBottomX = width - paddleWidth;
+        }
+        canvas.style.cursor = 'none';
     })
 };
 
